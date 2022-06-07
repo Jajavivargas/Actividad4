@@ -14,9 +14,9 @@ epsilon = 0.2
 min_epsilon = 0.05
 tabla_recompensa = np.full((lados, lados), 0)
 colores = [(224, 224, 224) for i in range(lados**2)]
-acciones = {"arriba": 0, "abajo": 1, "izquierda": 2, "derecha": 3, "topLeft": 4, "topRight": 5, "botLeft": 6, "botRight": 7}
+acciones = {"arriba": 0, "abajo": 1, "izquierda": 2, "derecha": 3}
 estados = {}
-tabla_Q = np.zeros((lados**2,8))
+tabla_Q = np.zeros((lados**2,4))
 
 
 def crear_ambiente():
@@ -46,20 +46,9 @@ def escoger_accion(estado_actual):
     cambios_evaluados = []
     if epsilon >= min_epsilon:
         if celda_actual[0] != 0:
-            if celda_actual[1] != 0:
-                acciones_disponibles.append("topLeft")
-            elif celda_actual[1] != lados-1:
-                acciones_disponibles.append("topRight")
-            else:
-                acciones_disponibles.append("arriba")
-
+            acciones_disponibles.append("arriba")
         if celda_actual[0] != lados-1:
-            if celda_actual[1] != 0:
-                acciones_disponibles.append("botLeft")
-            elif celda_actual[1] != lados-1:
-                acciones_disponibles.append("botRight")
-            else:
-                acciones_disponibles.append("abajo")
+            acciones_disponibles.append("abajo")
         if celda_actual[1] != 0:
             acciones_disponibles.append("izquierda")
         if celda_actual[1] != lados-1:
@@ -67,48 +56,21 @@ def escoger_accion(estado_actual):
         accion = acciones[acciones_disponibles[r(0,len(acciones_disponibles) - 1)]]
     elif np.random.uniform() <= epsilon:
         if celda_actual[0] != 0:
-            if celda_actual[1] != 0:
-                acciones_disponibles.append("topLeft")
-            elif celda_actual[1] != lados - 1:
-                acciones_disponibles.append("topRight")
-            else:
-                acciones_disponibles.append("arriba")
-
-        if celda_actual[0] != lados - 1:
-            if celda_actual[1] != 0:
-                acciones_disponibles.append("botLeft")
-            elif celda_actual[1] != lados - 1:
-                acciones_disponibles.append("botRight")
-            else:
-                acciones_disponibles.append("abajo")
+            acciones_disponibles.append("arriba")
+        if celda_actual[0] != lados-1:
+            acciones_disponibles.append("abajo")
         if celda_actual[1] != 0:
             acciones_disponibles.append("izquierda")
-        if celda_actual[1] != lados - 1:
+        if celda_actual[1] != lados-1:
             acciones_disponibles.append("derecha")
         accion = acciones[acciones_disponibles[r(0,len(acciones_disponibles) - 1)]]
     else:
         if celda_actual[0] != 0:
-            if celda_actual[1] != 0:
-                acciones_disponibles.append(tabla_Q[estado_actual, 4])
-                cambios_evaluados.append(4)
-            elif celda_actual[1] != lados - 1:
-                acciones_disponibles.append(tabla_Q[estado_actual, 5])
-                cambios_evaluados.append(5)
-            else:
-                acciones_disponibles.append(tabla_Q[estado_actual, 0])
-                cambios_evaluados.append(0)
-
-        if celda_actual[0] != lados - 1:
-            if celda_actual[1] != 0:
-                acciones_disponibles.append(tabla_Q[estado_actual, 6])
-                cambios_evaluados.append(6)
-            elif celda_actual[1] != lados - 1:
-                acciones_disponibles.append(tabla_Q[estado_actual, 7])
-                cambios_evaluados.append(7)
-            else:
-                acciones_disponibles.append(tabla_Q[estado_actual, 1])
-                cambios_evaluados.append(1)
-
+            acciones_disponibles.append(tabla_Q[estado_actual,0])
+            cambios_evaluados.append(0)
+        if celda_actual[0] != lados-1:
+            acciones_disponibles.append(tabla_Q[estado_actual,1])
+            cambios_evaluados.append(1)
         if celda_actual[1] != 0: 
             acciones_disponibles.append(tabla_Q[estado_actual,2])
             cambios_evaluados.append(2)
@@ -130,18 +92,6 @@ def iteracion():
     elif accion == 2: 
         celda_actual[1] -= 1
     elif accion == 3: 
-        celda_actual[1] += 1
-    elif accion == 4:
-        celda_actual[0] -= 1
-        celda_actual[1] -= 1
-    elif accion == 5:
-        celda_actual[0] += 1
-        celda_actual[1] -= 1
-    elif accion == 6:
-        celda_actual[0] -= 1
-        celda_actual[1] += 1
-    elif accion == 7:
-        celda_actual[0] += 1
         celda_actual[1] += 1
     proximo_estado = estados[(celda_actual[0],celda_actual[1])]
     if proximo_estado not in celdas:
