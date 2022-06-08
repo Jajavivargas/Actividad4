@@ -95,9 +95,9 @@ def iteracion():
         celda_actual[1] += 1
     proximo_estado = estados[(celda_actual[0],celda_actual[1])]
     if proximo_estado not in celdas:
-        tabla_Q[estado_actual,accion] += alpha*(tabla_recompensa[celda_actual[0],celda_actual[1]] + gamma*(np.max(tabla_Q[proximo_estado])) - tabla_Q[estado_actual,accion])
+        tabla_Q[estado_actual,accion] += round(alpha*(tabla_recompensa[celda_actual[0],celda_actual[1]] + gamma*(np.max(tabla_Q[proximo_estado])) - tabla_Q[estado_actual,accion]))
     else:
-        tabla_Q[estado_actual,accion] += alpha*(tabla_recompensa[celda_actual[0],celda_actual[1]] - tabla_Q[estado_actual,accion])
+        tabla_Q[estado_actual,accion] += round(alpha*(tabla_recompensa[celda_actual[0],celda_actual[1]] - tabla_Q[estado_actual,accion]))
         print(epsilon)
         celda_actual = [0,0]
         if epsilon > min_epsilon:
