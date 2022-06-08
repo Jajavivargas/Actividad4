@@ -3,8 +3,6 @@ import pygame
 from random import randint as r
 import random
 
-
-
 lados = 8
 celdas = []
 alpha = 0.05
@@ -16,8 +14,7 @@ tabla_recompensa = np.full((lados, lados), 0)
 colores = [(224, 224, 224) for i in range(lados**2)]
 acciones = {"arriba": 0, "abajo": 1, "izquierda": 2, "derecha": 3}
 estados = {}
-tabla_Q = np.zeros((lados**2,4))
-
+tabla_Q = np.zeros((lados**2, 4))
 
 def crear_ambiente():
     obstaculos = int(lados*0.8)
@@ -38,7 +35,6 @@ def crear_ambiente():
         for j in range(lados):
             estados[(i,j)] = contador
             contador+=1
-
 
 def escoger_accion(estado_actual):
     global celda_actual,epsilon
@@ -80,7 +76,6 @@ def escoger_accion(estado_actual):
         accion = cambios_evaluados[random.choice([i for i,a in enumerate(acciones_disponibles) if a == max(acciones_disponibles)])]
     return accion
       
-      
 def iteracion():
     global celda_actual,epsilon
     estado_actual = estados[(celda_actual[0],celda_actual[1])]
@@ -95,14 +90,13 @@ def iteracion():
         celda_actual[1] += 1
     proximo_estado = estados[(celda_actual[0],celda_actual[1])]
     if proximo_estado not in celdas:
-        tabla_Q[estado_actual,accion] += round(alpha*(tabla_recompensa[celda_actual[0],celda_actual[1]] + gamma*(np.max(tabla_Q[proximo_estado])) - tabla_Q[estado_actual,accion]))
+        tabla_Q[estado_actual, accion] += round(alpha*(tabla_recompensa[celda_actual[0],celda_actual[1]] + gamma*(np.max(tabla_Q[proximo_estado])) - tabla_Q[estado_actual,accion]))
     else:
-        tabla_Q[estado_actual,accion] += round(alpha*(tabla_recompensa[celda_actual[0],celda_actual[1]] - tabla_Q[estado_actual,accion]))
+        tabla_Q[estado_actual, accion] += round(alpha*(tabla_recompensa[celda_actual[0],celda_actual[1]] - tabla_Q[estado_actual, accion]))
         print(epsilon)
         celda_actual = [0,0]
         if epsilon > min_epsilon:
-            epsilon -= 5e-4 
-            
+            epsilon -= 5e-4
               
 def distribucion():
     color = 0
@@ -123,11 +117,13 @@ def distribucion():
     pygame.font.init()
     fuente = pygame.font.Font("RobotoMono-Light.ttf", int(scry/64))
 
-    for i in range(64):
+    for i in range(32):
         texto = fuente.render(str(tabla_Q[i]), 1, (0, 0, 0))
-        screen.blit(texto, (10, int(i*scry/64)))
+        screen.blit(texto, (10, int(i * scry / 32)))
+    for i in range(32, 64):
+        texto = fuente.render(str(tabla_Q[i]), 1, (0, 0, 0))
+        screen.blit(texto, (250, int((i % 32) * scry / 32)))
     pygame.display.flip()
-    
 
 def main():
     crear_ambiente()
@@ -141,6 +137,5 @@ def main():
         iteracion()
     pygame.quit()
     print(tabla_Q)
-
 
 main()
